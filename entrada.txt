@@ -1,0 +1,179 @@
+[centro] # Universidade Federal do Maranhão
+[centro] São Luís, 08 de julho de 2026
+[centro] Thalisson Nilson da Silva Martins
+
+[centro] # Métodos Numéricos - Prova 03
+
+Questão 1: Interseção e Otimização Gráfica
+
+# I. Pontos de interseção das retas (encontrando x e y):
+- Reta 1: 6x1 + 4x2 = 24 -> Pontos nos eixos (0, 6) e (4, 0)
+- Reta 2: x1 + 2x2 = 6 -> Pontos nos eixos (0, 3) e (6, 0)
+- Reta 3: -x1 + x2 = 1 -> Pontos nos eixos (0, 1) e (-1, 0)
+- Reta 4: x2 = 2 -> Reta horizontal
+
+# II. Conjunto de Soluções Básicas factíveis (cálculo vértices):
+- A (origem) = (0, 0)
+- B (eixo y com R3): x1 = 0 => x2 = 1 => vértice B = (0, 1)
+- C (intersecção R3 e R4): x2 = 2 ; -x1 + x2 = 1 => -x1 + 2 = 1 => x1 = 1 => vértice C = (1, 2)
+- D (intersecção R4 e R2): x2 = 2 ; x1 + 2x2 = 6 => x1 + 4 = 6 => x1 = 2 => vértice D = (2, 2)
+- E (intersecção R2 e R1): x1 + 2x2 = 6 => x1 = 6 - 2x2 -> substituindo:
+  6(6 - 2x2) + 4x2 = 24
+  36 - 12x2 + 4x2 = 24
+  -8x2 = -12 => x2 = 1.5
+  logo vértice E: x1 = 6 - 2(1.5) = 3 => vértice E = (3, 1.5)
+- F (R1 no eixo x): Ponto em x2 = 0 => vértice F = (4, 0)
+- Conjunto SBF: S = {(0, 0), (0, 1), (1, 2), (2, 2), (3, 1.5), (4, 0)}
+
+# III. Testando para solução ótima (máx z = x1 + 2x2):
+- Z(A) = 0 + 2(0) = 0
+- Z(B) = 0 + 2(1) = 2
+- Z(C) = 1 + 2(2) = 5
+- Z(D) = 2 + 2(2) = 6
+- Z(E) = 3 + 2(1.5) = 6
+- Z(F) = 4 + 2(0) = 4
+-> O valor ótimo da função objetivo é z = 6.
+- No caso, possui múltiplas soluções ótimas correspondentes a todo o segmento de reta que liga os vértices D(2, 2) e E(3, 1.5).
+
+Questão 2: Fluxo de Potência
+
+# I. Definição das variáveis de decisão:
+- Pg1: Potência ativa gerada pelo gerador 1 no eixo 1 (MW).
+- Pg2: Pelo gerador 2 no eixo 2 ; Pg3: Pelo gerador 3 no eixo 3 em MW.
+- T12, T23, T31: Fluxos de potência ativa nas linhas de interligação da rede (em MW).
+
+# II. Formulação do PPL:
+- Função Objetivo: mín z = 15 Pg1 + 38 Pg2 + 45 Pg3
+- Sujeito às restrições:
+  2.1 Balanço de potência nas áreas (Geração - fluxo de saída + fluxo de entrada = carga):
+  - Área 1: Pg1 - T12 + T31 = 150
+  - Área 2: Pg2 + T12 - T23 = 200
+  - Área 3: Pg3 + T23 - T31 = 350
+  2.2 Limites físicos dos geradores (mínimo e máximo):
+  - 60 <= Pg1 <= 400
+  - 30 <= Pg2 <= 300
+  - 20 <= Pg3 <= 150
+  2.3 Limites nominais de capacidade de transmissão (Não-negatividade e máximo):
+  - 0 <= T12 <= 100
+  - 0 <= T23 <= 120
+  - 0 <= T31 <= 50
+
+[centro] ### Questão 3: Resolução por Simplex
+
+# I. Organização:
+- Adicionando variáveis de folga (x3, x4) para transformar as desigualdades em igualdades e igualando a função objetivo a zero:
+- Z - 40x1 - 35x2 + 0x3 + 0x4 = 0
+- 2x1 + 3x2 + x3 + 0x4 = 60
+- 4x1 + 3x2 + 0x3 + x4 = 96
+
+# II. Tabela inicial:
+[centro] [tabela]
+Base | x1 | x2 | x3 | x4 | b
+Z | -40 | -35 | 0 | 0 | 0
+x3 | 2 | 3 | 1 | 0 | 60
+x4 | 4 | 3 | 0 | 1 | 96
+[/tabela]
+- Entra na base: x1 (coeficiente mais negativo em z: -40)
+- Sai da base: x4 (pois 96/4 = 24 < 60/2 = 30)
+- Pivô: 4
+
+# Operações:
+- L1(nova) = L3 / 4 => [1, 0.75, 0, 0.25, 24]
+- L2(nova) = L2 - 2 * L1(nova) => [0, 1.5, 1, -0.5, 12]
+- L1(Z nova) = L1 + 40 * L1(nova) => [0, -5, 0, 10, 960]
+
+# III. Nova tabela:
+[centro] [tabela]
+Base | x1 | x2 | x3 | x4 | b
+Z | 0 | -5 | 0 | 10 | 960
+x3 | 0 | 1.5 | 1 | -0.5 | 12
+x1 | 1 | 0.75 | 0 | 0.25 | 24
+[/tabela]
+- Entra na base: x2 (mais negativo)
+- Sai da base: x3 (pois 12 / 1.5 < 24 / 0.75)
+- Pivô: 1.5
+
+# Operações:
+- L2(nova) = L2 / 1.5 = [0, 1, 2/3, -1/3, 8]
+- L3(nova) = L3 - 0.75 * L2(nova) = [1, 0, -1/2, 1/2, 18]
+- L1(nova) = L1 + 5 * L2(nova) = [0, 0, 10/3, 25/3, 1000]
+
+# IV. Tabela nova (Final):
+[centro] [tabela]
+Base | x1 | x2 | x3 | x4 | b
+Z | 0 | 0 | 10/3 | 25/3 | 1000
+x2 | 0 | 1 | 2/3 | -1/3 | 8
+x1 | 1 | 0 | -1/2 | 1/2 | 18
+[/tabela]
+- Como não há mais valores negativos na linha da função objetivo (Z), a otimização está concluída.
+- x1 = 18 ; x2 = 8 ; Lucro Máximo (z) = 1000
+
+Questão 4: Método do M-Grande
+
+# I. Adicionando variáveis artificiais e Função Objetivo (minimização):
+- 3x1 + 2x2 - 4x3 + a1 = 10
+- x1 - x2 + 3x3 + a2 = 60
+- Z = 2x1 + 2x2 - 5x3 + M a1 + M a2
+
+# II. Agora zerar o M das variáveis básicas:
+- Isolar a1 e a2 e substituir em Z:
+  a1 = 10 - 3x1 - 2x2 + 4x3
+  a2 = 60 - x1 + x2 - 3x3
+- Substituindo:
+  Z = 2x1 + 2x2 - 5x3 + M(10 - 3x1 - 2x2 + 4x3) + M(60 - x1 + x2 - 3x3)
+  Z = (2 - 4M)x1 + (2 - M)x2 + (-5 + M)x3 + 70M
+
+# III. Tabela inicial:
+[centro] [tabela]
+Base | x1 | x2 | x3 | a1 | a2 | b
+Z | 4M - 2 | M - 2 | 5 - M | 0 | 0 | 70M
+a1 | 3 | 2 | -4 | 1 | 0 | 10
+a2 | 1 | -1 | 3 | 0 | 1 | 60
+[/tabela]
+- Entra: x1 (pela regra de minimização, o maior positivo: 4M - 2)
+- Sai: a1 (pois 10/3 < 60/1)
+- Pivô: 3
+
+# Operações:
+- L2(nova) = L2 / 3 => [1, 2/3, -4/3, 1/3, 0, 10/3]
+- L3(nova) = L3 - 1 * L2(nova) => [0, -5/3, 13/3, -1/3, 1, 170/3]
+- L1(nova) = L1 - (4M - 2) * L2(nova) => [0, (-2M - 2)/3, (3M + 7)/3, (4 - 4M)/3, 0, (210M + 20)/3]
+
+# IV. Tabela nova:
+[centro] [tabela]
+Base | x1 | x2 | x3 | a1 | a2 | b
+Z | 0 | (-2M - 2)/3 | (3M + 7)/3 | (4 - 4M)/3 | 0 | (210M + 20)/3
+x1 | 1 | 2/3 | -4/3 | 1/3 | 0 | 10/3
+a2 | 0 | -5/3 | 13/3 | -1/3 | 1 | 170/3
+[/tabela]
+- Entra: x3 (maior positivo na linha Z) ; Sai: a2 (menor razão) ; Pivô: 13/3
+
+# Operações:
+- L3(nova) = L3 / (13/3) => [0, -5/13, 1, -1/13, 3/13, 170/13]
+- L2(nova) = L2 - (-4/3) * L3(nova) => [1, 2/13, 0, 1/13, 4/13, 270/13]
+- L1(nova) = L1 - ((3M + 7)/3) * L3(nova) => [0, 3/13, 0, (-3M + 14)/13, (-3M - 7)/13, -55]
+
+# V. Nova tabela:
+[centro] [tabela]
+Base | x1 | x2 | x3 | b
+Z | 0 | 3/13 | 0 | -55
+x1 | 1 | 2/13 | 0 | 270/13
+x3 | 0 | -5/13 | 1 | 170/13
+[/tabela]
+- Entra: x2 (termo positivo) ; Sai: x1 (menor razão) ; Pivô: 2/13
+
+# Operações:
+- L2(nova) = L2 / (2/13) => [13/2, 1, 0, 135]
+- L3(nova) = L3 - (-5/13) * L2(nova) => [6/2, 0, 1, 65]
+- L1(nova) = L1 - (3/13) * L2(nova) => [-3/2, 0, 0, -95]
+
+# VI. Nova tabela (Final):
+[centro] [tabela]
+Base | x1 | x2 | x3 | b
+Z | -3/2 | 0 | 0 | -95
+x2 | 13/2 | 1 | 0 | 135
+x3 | 6/2 | 0 | 1 | 65
+[/tabela]
+- Não há mais valores positivos na linha da função objetivo (Z). Otimização concluída.
+- x1 = 0 ; x2 = 135 ; x3 = 65
+- Custo mínimo (z) = -65

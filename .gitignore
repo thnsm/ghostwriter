@@ -1,0 +1,35 @@
+# ==========================================
+# CACHE E ARQUIVOS DE SISTEMA
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==========================================
+# DIRETÓRIOS ANTIGOS E DE TESTE
+# ==========================================
+Códigos_Antigos/
+temp_extracao_novos_simbolos/
+debug_ancoras/
+fotinhas/
+letras_extraidas/
+dataset_expansao_bruta/
+dataset/
+
+# ==========================================
+# SCRIPTS DE TESTE E FERRAMENTAS ISOLADAS
+# ==========================================
+filtro.py
+matriz.py
+tempo_real.py
+conec.py
+
+# ==========================================
+# ARQUIVOS DE SAÍDA E TESTES VISUAIS
+# ==========================================
+*.pdf
+*NORMAL.jpg
+*SIGAA.jpg
+teste_tabela_output.jpg
+teste_matriz_output.jpg
+Prova_Real_Filtro*
