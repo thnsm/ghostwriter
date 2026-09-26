@@ -1,9 +1,12 @@
 # ==========================================
-# CACHE E ARQUIVOS DE SISTEMA
+# CACHE E AMBIENTE VIRTUAL
 # ==========================================
 __pycache__/
 *.py[cod]
 *$py.class
+.venv/
+env/
+venv/
 
 # ==========================================
 # DIRETÓRIOS ANTIGOS E DE TESTE
@@ -30,6 +33,9 @@ conec.py
 *.pdf
 *NORMAL.jpg
 *SIGAA.jpg
+*SCANNER.jpg
+saida_pagina_*
 teste_tabela_output.jpg
 teste_matriz_output.jpg
 Prova_Real_Filtro*
+*_backup.txt

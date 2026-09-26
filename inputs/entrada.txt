@@ -1,0 +1,27 @@
+[centro] # Teste Geral do Escritor Caligráfico
+[centro] Demonstração de Síntese Caligráfica
+
+Este é um teste de caligrafia humana simulada. O algoritmo realiza conexões orgânicas entre letras cursivas usando curvas de Bézier e adiciona pequenas imperfeições para simular o traço de uma caneta esferográfica.
+
+Verificamos a pontuação: ponto final, vírgula, parênteses (como este), interrogação? e exclamação!
+Também testamos acentos: café, ação, bênção, frequência e saúde.
+
+# Exemplo Matemático e Matriz:
+A impedância equivalente Z = 120 + 45j Ω operando na frequência de 60Hz.
+
+[matriz]
+1, 2, 3
+4, 5, 6
+7, 8, 9
+[/matriz]
+
+Abaixo temos uma pequena tabela de dados:
+
+[centro] [tabela]
+Parâmetro | Valor | Unidade
+Tensão | 220 | V
+Corrente | 10 | A
+Potência | 2200 | W
+[/tabela]
+
+Finalizando o teste da página com sucesso.

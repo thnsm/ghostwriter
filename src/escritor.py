@@ -1,4 +1,4 @@
-# main.py
+# escritor.py
 import os
 import cv2
 import json
@@ -8,12 +8,14 @@ from PIL import Image
 import config
 import motor
 
-def carregar_texto(caminho_arquivo="entrada.txt"):
-    if not os.path.exists(caminho_arquivo):
+def carregar_texto(caminho_arquivo="../inputs/entrada.txt"):
+    caminho_resolvido = config.resolver_caminho(caminho_arquivo)
+    
+    if not os.path.exists(caminho_resolvido):
         texto_padrao = (
             "A análise de circuitos elétricos em regime senoidal requer o uso "
             "extensivo de equações matemáticas e matrizes complexas. Durante "
-            "os testes laboratoriais na UFMA, verificamos que a impedância "
+            "os testes laboratoriais de bancada, verificamos que a impedância "
             "equivalente do sistema trifásico afeta diretamente a defasagem "
             "angular entre a tensão e a corrente. O projeto final que envolve "
             "a programação de microcontroladores Arduino em C e a modelagem "
@@ -22,11 +24,12 @@ def carregar_texto(caminho_arquivo="entrada.txt"):
             "na frequência de 160MHz. Foi necessário recalcular a resistência de "
             "Thevenin, ajustando os parâmetros na placa de circuito impresso PCB."
         )
-        with open(caminho_arquivo, 'w', encoding='utf-8') as f:
+        os.makedirs(os.path.dirname(caminho_resolvido), exist_ok=True)
+        with open(caminho_resolvido, 'w', encoding='utf-8') as f:
             f.write(texto_padrao)
         return texto_padrao
     
-    with open(caminho_arquivo, 'r', encoding='utf-8') as f:
+    with open(caminho_resolvido, 'r', encoding='utf-8') as f:
         return f.read()
 
 def aplicar_filtro_scanner(imagem_colorida):
@@ -49,33 +52,36 @@ def aplicar_filtro_scanner(imagem_colorida):
     scan_final = np.clip(scan_calculado, 0, 255).astype(np.uint8)
     
     return scan_final
-    
-    return scan_pb
 
 def main():
     print("=" * 55)
-    print("ESCRITOR CALIGRÁFICO - GERADOR DE PDF SIGAA")
+    print("GHOSTWRITER - SINTETIZADOR DE CALIGRAFIA HUMANA")
     print("=" * 55)
 
-    pasta_dataset = "dataset_refinado"
-    foto_papel_real = "Folha.jpeg"
-    arquivo_ancoras = "ancoras.json"
+    pasta_dataset = config.resolver_caminho(config.PASTA_DATASET)
+    foto_papel_real = config.resolver_caminho(config.CAMINHO_FUNDO)
+    arquivo_ancoras = config.resolver_caminho(config.ARQUIVO_ANCORAS)
+    caminho_entrada = config.resolver_caminho(config.CAMINHO_ENTRADA)
+    pasta_saida = config.resolver_caminho(config.PASTA_SAIDA)
+    caminho_pdf = os.path.join(pasta_saida, config.NOME_ARQUIVO_PDF)
     
     ancoras = None
     if os.path.exists(arquivo_ancoras):
         with open(arquivo_ancoras, 'r', encoding='utf-8') as f:
             ancoras = json.load(f)
-        print("[+] Mapa de âncoras cursivas carregado.")
+        print(f"[+] Mapa de âncoras cursivas carregado de: {arquivo_ancoras}")
+    else:
+        print(f"[-] Aviso: Mapa de âncoras não encontrado em {arquivo_ancoras}. Conexões usarão modo padrão.")
 
-    print("[*] Carregando banco de letras e processando matrizes...")
+    print(f"[*] Carregando banco de letras de: {pasta_dataset}...")
     banco = motor.carregar_banco_de_letras(pasta_dataset)
     
     if not banco:
-        print("[!] ERRO: Nenhuma letra encontrada.")
+        print(f"[!] ERRO: Nenhuma letra encontrada na pasta '{pasta_dataset}'.")
         return
 
-    texto = carregar_texto("entrada.txt")
-    print(f"[+] Texto carregado com sucesso ({len(texto)} caracteres).")
+    texto = carregar_texto(caminho_entrada)
+    print(f"[+] Texto carregado com sucesso ({len(texto)} caracteres) de: {caminho_entrada}")
 
     print(f"[*] Renderizando caligrafia na folha '{foto_papel_real}'...")
     paginas = motor.escrever_texto_longo(texto, banco, ancoras, foto_papel_real)
@@ -89,7 +95,7 @@ def main():
     
     for i, pagina in enumerate(paginas):
         # 1. Salva a versão normal (Colorida, textura de papel real)
-        nome_normal = f"saida_pagina_{i+1}_NORMAL.jpg"
+        nome_normal = os.path.join(pasta_saida, f"saida_pagina_{i+1}_NORMAL.jpg")
         cv2.imwrite(nome_normal, pagina, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
         print(f"   -> Imagem Normal salva: {nome_normal}")
         
@@ -97,7 +103,7 @@ def main():
         pagina_pb = aplicar_filtro_scanner(pagina)
         
         # 3. Salva a versão P&B (Estilo Xerox/Scanner)
-        nome_pb = f"saida_pagina_{i+1}_SIGAA.jpg"
+        nome_pb = os.path.join(pasta_saida, f"saida_pagina_{i+1}_SCANNER.jpg")
         cv2.imwrite(nome_pb, pagina_pb, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
         print(f"   -> Imagem Escaneada salva: {nome_pb}")
         
@@ -107,14 +113,14 @@ def main():
 
     if config.GERAR_PDF and imagens_pil_pb:
         imagens_pil_pb[0].save(
-            config.NOME_ARQUIVO_PDF,
+            caminho_pdf,
             save_all=True,
             append_images=imagens_pil_pb[1:]
         )
-        print(f"   -> PDF em Preto e Branco finalizado: {config.NOME_ARQUIVO_PDF}")
+        print(f"   -> PDF em Preto e Branco finalizado: {caminho_pdf}")
         
     print("\n" + "=" * 55)
-    print("GRAÇAS A DEUS TERMINEI! '_SIGAA.jpg'.")
+    print("Processamento concluído com sucesso!")
     print("=" * 55)
 
 if __name__ == "__main__":
